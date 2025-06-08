@@ -133,26 +133,33 @@ class PrayerTimes {
   }
 
   String getNextPrayerTime() {
-    final now = DateTime.now();
-    final currentTime = DateFormat('HH:mm').format(now);
+    final nextPrayer = getNextPrayer();
+    String time;
     
-    final times = [
-      {'name': 'İmsak', 'time': fajr},
-      {'name': 'Güneş', 'time': sunrise},
-      {'name': 'Öğle', 'time': dhuhr},
-      {'name': 'İkindi', 'time': asr},
-      {'name': 'Akşam', 'time': maghrib},
-      {'name': 'Yatsı', 'time': isha},
-    ];
-
-    for (var prayer in times) {
-      if (currentTime.compareTo(prayer['time']!) < 0) {
-        return '${prayer['name']} - ${prayer['time']}';
-      }
+    switch (nextPrayer) {
+      case 'İmsak':
+        time = fajr;
+        break;
+      case 'Güneş':
+        time = sunrise;
+        break;
+      case 'Öğle':
+        time = dhuhr;
+        break;
+      case 'İkindi':
+        time = asr;
+        break;
+      case 'Akşam':
+        time = maghrib;
+        break;
+      case 'Yatsı':
+        time = isha;
+        break;
+      default:
+        time = fajr;
     }
-
-    // Eğer tüm vakitler geçmişse, yarının ilk vakti
-    return 'İmsak - $fajr';
+    
+    return '$nextPrayer - $time';
   }
 
   String getRemainingTime() {

@@ -7,13 +7,21 @@ class PrayerTime {
   final IconData icon;
   final bool isActive;
 
-  const PrayerTime({
+  PrayerTime({
     required this.name,
     required this.arabicName,
     required this.time,
     required this.icon,
-    this.isActive = false,
+    required this.isActive,
   });
+
+  static bool isTimeBetween(String time, String start, String end) {
+    // Eğer bitiş zamanı başlangıç zamanından küçükse (gece yarısını geçen durumlar için)
+    if (end.compareTo(start) < 0) {
+      return time.compareTo(start) >= 0 || time.compareTo(end) < 0;
+    }
+    return time.compareTo(start) >= 0 && time.compareTo(end) < 0;
+  }
 
   static List<PrayerTime> getMockPrayerTimes() {
     return [

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class BottomNavBar extends StatelessWidget {
   final int currentIndex;
@@ -13,118 +12,37 @@ class BottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 20,
-            offset: const Offset(0, -5),
-          ),
-        ],
-      ),
-      child: NavigationBar(
-        height: 65,
-        backgroundColor: Colors.transparent,
-        indicatorColor: const Color(0xFF1C6758).withOpacity(0.1),
-        selectedIndex: currentIndex,
-        onDestinationSelected: onTap,
-        destinations: [
-          NavigationDestination(
-            icon: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: currentIndex == 0
-                    ? const Color(0xFF1C6758).withOpacity(0.1)
-                    : Colors.transparent,
-              ),
-              child: SvgPicture.asset(
-                'assets/icons/home.svg',
-                width: 24,
-                height: 24,
-                colorFilter: ColorFilter.mode(
-                  currentIndex == 0
-                      ? const Color(0xFF1C6758)
-                      : Colors.grey[400]!,
-                  BlendMode.srcIn,
-                ),
-              ),
-            ),
-            label: '',
-          ),
-          NavigationDestination(
-            icon: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: currentIndex == 1
-                    ? const Color(0xFF1C6758).withOpacity(0.1)
-                    : Colors.transparent,
-              ),
-              child: SvgPicture.asset(
-                'assets/icons/mosque.svg',
-                width: 24,
-                height: 24,
-                colorFilter: ColorFilter.mode(
-                  currentIndex == 1
-                      ? const Color(0xFF1C6758)
-                      : Colors.grey[400]!,
-                  BlendMode.srcIn,
-                ),
-              ),
-            ),
-            label: '',
-          ),
-          NavigationDestination(
-            icon: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: currentIndex == 2
-                    ? const Color(0xFF1C6758).withOpacity(0.1)
-                    : Colors.transparent,
-              ),
-              child: SvgPicture.asset(
-                'assets/icons/quran.svg',
-                width: 24,
-                height: 24,
-                colorFilter: ColorFilter.mode(
-                  currentIndex == 2
-                      ? const Color(0xFF1C6758)
-                      : Colors.grey[400]!,
-                  BlendMode.srcIn,
-                ),
-              ),
-            ),
-            label: '',
-          ),
-          NavigationDestination(
-            icon: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: currentIndex == 3
-                    ? const Color(0xFF1C6758).withOpacity(0.1)
-                    : Colors.transparent,
-              ),
-              child: SvgPicture.asset(
-                'assets/icons/compass.svg',
-                width: 24,
-                height: 24,
-                colorFilter: ColorFilter.mode(
-                  currentIndex == 3
-                      ? const Color(0xFF1C6758)
-                      : Colors.grey[400]!,
-                  BlendMode.srcIn,
-                ),
-              ),
-            ),
-            label: '',
-          ),
-        ],
-      ),
+    return NavigationBar(
+      selectedIndex: currentIndex,
+      onDestinationSelected: onTap,
+      backgroundColor: Colors.white,
+      indicatorColor: const Color(0xFF1C6758).withOpacity(0.1),
+      shadowColor: Colors.transparent,
+      surfaceTintColor: Colors.transparent,
+      height: 65,
+      labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+      destinations: const [
+        NavigationDestination(
+          icon: Icon(Icons.home_outlined),
+          selectedIcon: Icon(Icons.home, color: Color(0xFF1C6758)),
+          label: 'Ana Sayfa',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.mosque_outlined),
+          selectedIcon: Icon(Icons.mosque, color: Color(0xFF1C6758)),
+          label: 'Namaz',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.menu_book_outlined),
+          selectedIcon: Icon(Icons.menu_book, color: Color(0xFF1C6758)),
+          label: 'Kuran',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.explore_outlined),
+          selectedIcon: Icon(Icons.explore, color: Color(0xFF1C6758)),
+          label: 'Kıble',
+        ),
+      ],
     );
   }
 } 

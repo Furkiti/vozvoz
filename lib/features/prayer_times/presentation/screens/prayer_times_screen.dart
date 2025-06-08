@@ -369,10 +369,17 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
   }
 
   Widget _buildNextPrayerCard() {
-    final nextPrayer = _prayerTimesList.firstWhere(
+    // Şu anki aktif vakti bul
+    final currentPrayer = _prayerTimesList.firstWhere(
       (prayer) => prayer.isActive,
       orElse: () => _prayerTimesList.first,
     );
+
+    // Sonraki vakti bul
+    int currentIndex = _prayerTimesList.indexOf(currentPrayer);
+    final nextPrayer = currentIndex < _prayerTimesList.length - 1
+        ? _prayerTimesList[currentIndex + 1]
+        : _prayerTimesList.first;
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24),
