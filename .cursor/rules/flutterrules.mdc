@@ -1,0 +1,26 @@
+---
+description: 
+globs: 
+---
+# Project Rules – Flutter Prayer Times App
+
+## 📂 Directory Structure
+
+```bash
+/lib
+  /core               # Core utilities and base classes (theme, constants, helpers)
+  /data
+    /datasources      # Remote or local data sources (e.g. APIs, local storage)
+    /models           # Data Transfer Objects
+    /repositories     # Concrete implementation of domain repositories
+  /domain
+    /entities         # Core business entities (e.g. PrayerTime)
+    /repositories     # Abstract repository interfaces
+    /usecases         # Business logic (e.g. GetDailyPrayerTimes)
+  /presentation
+    /screens          # UI screens (HomeScreen, SettingsScreen)
+    /widgets          # Reusable UI components (e.g. PrayerCard)
+    /providers        # State management (e.g. PrayerTimeProvider)
+  /l10n               # Localization files (arb)
+  /routes             # Route definitions and guards
+  main.dart           # Entry point

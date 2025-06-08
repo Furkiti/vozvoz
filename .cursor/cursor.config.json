@@ -1,0 +1,38 @@
+{
+    "projectType": "flutter",
+    "language": "dart",
+    "name": "Namaz Vakitleri App",
+    "ai": {
+      "purpose": "This is a Flutter application focused on Islamic prayer times with clean architecture and SOLID principles.",
+      "directives": [
+        "Use English comments in all functions and classes.",
+        "Avoid business logic inside UI components.",
+        "Follow the Clean Architecture: presentation, application, domain, data layers.",
+        "Use Provider or Riverpod for state management.",
+        "Avoid duplicate code – use shared components and constants.",
+        "Use FutureBuilder or StreamBuilder correctly.",
+        "All texts must be localizable.",
+        "Explain complex code blocks with helpful comments.",
+        "Respect Flutter performance best practices (stateless if possible)."
+      ],
+      "styleGuide": {
+        "namingConvention": "lowerCamelCase for variables and methods, PascalCase for class names, snake_case for files",
+        "widgetStructure": "Keep widgets as stateless as possible. Split into atomic, molecule, and organism-level widgets if necessary.",
+        "codeComments": "Every class and method must have a clear docstring comment in English."
+      },
+      "priorityFiles": [
+        "lib/presentation/screens/home_screen.dart",
+        "lib/domain/usecases/get_daily_prayer_times.dart",
+        "lib/data/datasources/prayer_api_service.dart",
+        "lib/core/constants/app_strings.dart",
+        "lib/main.dart"
+      ],
+      "ignorePaths": [
+        "build/",
+        ".dart_tool/",
+        "android/",
+        "ios/"
+      ]
+    }
+  }
+  

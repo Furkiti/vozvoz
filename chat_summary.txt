@@ -1,0 +1,211 @@
+# Chat Summary for Namazio Project
+
+## Project Overview
+- **Project Name**: Namazio (Azanly globally)
+- **Framework**: React Native
+- **Language**: TypeScript
+- **State Management**: Context API
+- **Navigation**: @react-navigation/native
+- **Notifications**: notifee
+- **API Source**: Aladhan API
+
+## Recent Changes & Updates
+1. **Location Services Implementation**:
+   - Added react-native-geolocation-service for location handling
+   - Implemented persistent location permission handling using AsyncStorage
+   - Fixed "never_ask_again" permission issue
+   - Set default location to Ankara (39.9334, 32.8597)
+   - Added location permission modal with better UI
+   - Enhanced error handling and logging for location services
+
+2. **Prayer Times API Integration**:
+   - Using Aladhan API with HTTPS
+   - Added User-Agent header for API requests
+   - Added proper timezone and method settings for Turkey
+   - Enhanced error handling with detailed error messages
+   - Added loading states with ActivityIndicator
+   - Improved retry mechanism with better UI
+
+3. **UI Enhancements**:
+   - Added loading indicators with ActivityIndicator
+   - Improved error messages and retry buttons
+   - Added location display in prayer times card
+   - Enhanced permission request modal with better UX
+   - Added icons for retry and location features
+   - Implemented proper loading states
+
+4. **Android Configuration**:
+   - Added required location permissions in AndroidManifest.xml
+   - Configured vector-icons properly
+   - Added cleartext traffic support
+   - Removed background location permission request
+   - Simplified permission request flow
+
+5. **iOS Configuration**:
+   - Added location permission descriptions
+   - Configured vector-icons
+   - Implemented location authorization request
+
+## Project Structure
+1. **Screens**:
+   - HomeScreen (Main screen with prayer times)
+   - PrayerTimesScreen
+   - AyatHadithScreen
+   - AboutScreen
+   - DhikrScreen (Accessible from HomeScreen)
+   - QiblaScreen (Accessible from HomeScreen)
+   - SplashScreen
+
+2. **Navigation**:
+   - Stack navigation for main flow
+   - Bottom tab navigation for main screens
+   - Custom navigation options with icons
+
+3. **Services**:
+   - prayerTimes.ts: Handles API calls to Aladhan
+   - Location services with geolocation
+
+4. **Components**:
+   - Permission Modal
+   - Prayer Times Card
+   - Loading indicators
+   - Custom buttons and cards
+
+## Dependencies
+1. **Core Dependencies**:
+   - @react-navigation/native
+   - @react-navigation/stack
+   - @react-navigation/bottom-tabs
+   - react-native-geolocation-service
+   - @react-native-async-storage/async-storage
+   - react-native-vector-icons
+   - react-native-safe-area-context
+   - react-native-screens
+   - @notifee/react-native
+   - axios
+
+2. **Development Dependencies**:
+   - TypeScript
+   - ESLint
+   - Prettier
+   - React Native CLI tools
+
+## Features
+1. **Prayer Times**:
+   - Shows daily prayer times based on location
+   - Displays city information
+   - Auto-updates based on location
+   - Error handling with retry option
+
+2. **Location Handling**:
+   - Persistent permission management
+   - Default location set to Ankara
+   - Smart permission request flow
+   - Settings redirection when needed
+
+3. **UI/UX**:
+   - Modern card-based design
+   - Loading states
+   - Error handling with user feedback
+   - Smooth animations
+   - Responsive layout
+
+## Current Status
+1. **Working Features**:
+   - Prayer times display
+   - Location permission handling
+   - Vector icons
+   - Navigation system
+   - Basic screens structure
+
+2. **Pending Features**:
+   - Prayer time notifications
+   - Qibla direction
+   - Dhikr counter
+   - Daily verse and hadith updates
+   - Multiple language support
+
+## Notes
+1. **Location Permission**:
+   - Permission is asked only once
+   - Status is stored in AsyncStorage
+   - Default location is set to Ankara
+   - Permission modal shows when needed
+
+2. **API Integration**:
+   - Using HTTPS for all API calls
+   - Added proper error handling
+   - Includes retry mechanism
+   - Uses Turkey-specific prayer calculation method
+
+3. **Performance**:
+   - Optimized re-renders
+   - Efficient permission checking
+   - Proper loading states
+   - Smooth navigation
+
+## Future Improvements
+1. **Features to Add**:
+   - Location selection capability
+   - Offline support
+   - Prayer time notifications
+   - Multiple language support
+   - Weather integration
+
+2. **Technical Improvements**:
+   - Add proper testing
+   - Implement caching
+   - Add error boundary
+   - Enhance type safety
+
+## Debug Information
+- Location permission status stored in AsyncStorage
+- Console logs for API responses
+- Error tracking for location services
+- Network request logging
+
+This summary reflects the current state of the project as of the latest changes.
+
+Geliştirme Güncellemeleri (Son Eklenenler):
+
+1. PrayerCard Bileşeni İyileştirmeleri:
+   - Kartın üst boşluğu artırıldı (marginTop: 16)
+   - İç çerçeve boyutları optimize edildi
+   - Kart yüksekliği 200 olarak ayarlandı
+   - İç çerçeve minimum yüksekliği 64'e ayarlandı
+   - Padding değerleri optimize edildi (dikey: 12, yatay: 16)
+
+2. Metin ve Görünüm İyileştirmeleri:
+   - Font boyutları optimize edildi
+   - Kalan süre metni için fontSize: 15
+   - Saat göstergesi için fontSize: 24
+   - Saat göstergesi için minimum genişlik (70) eklendi
+   - Metin hizalamaları düzeltildi
+
+3. Namaz Vakti Hesaplamaları İyileştirmeleri:
+   - Mevcut vakit hesaplama mantığı güncellendi
+   - Sonraki vakit hesaplama mantığı iyileştirildi
+   - Kalan süre formatı optimize edildi:
+     * Sadece saat olduğunda "X saat"
+     * Sadece dakika olduğunda "X dakika"
+     * Her ikisi olduğunda "X saat Y dakika"
+   - 24 saatlik döngü hesaplaması düzeltildi
+
+4. Konum ve Veri Yükleme İyileştirmeleri:
+   - Konum alınamadığında varsayılan olarak Ankara koordinatları kullanılıyor
+   - Hata durumları için daha açıklayıcı mesajlar eklendi
+   - Detaylı hata ayıklama logları eklendi
+
+5. Genel İyileştirmeler:
+   - Performans optimizasyonları yapıldı
+   - Kod okunabilirliği artırıldı
+   - Hata yönetimi geliştirildi
+   - Kullanıcı deneyimi iyileştirildi
+
+Yapılacaklar ve Planlanan İyileştirmeler:
+1. Performans optimizasyonlarının devam ettirilmesi
+2. Kullanıcı arayüzü ince ayarlarının yapılması
+3. Hata durumlarının daha da iyileştirilmesi
+4. Kullanıcı deneyiminin sürekli geliştirilmesi
+
+Not: Bu özet, uygulamanın sürekli gelişim sürecinin bir parçasıdır ve yeni özellikler/iyileştirmeler eklendikçe güncellenecektir. 
