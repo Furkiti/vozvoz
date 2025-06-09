@@ -21,15 +21,48 @@ class PrayerTimesProvider extends ChangeNotifier {
   bool _isLoading = true;
   bool _hasError = false;
   Timer? _timer;
+  Timer? _updateTimer;
 
   PrayerTimesProvider(
     this._locationService,
     this._prayerTimesService,
   ) {
     _initializePrayerTimes();
-    _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
-      _updateRemainingTime();
+    _startTimers();
+  }
+
+  void _startTimers() {
+    // Cancel existing timers if any
+    _timer?.cancel();
+    _updateTimer?.cancel();
+
+    // Start a timer that ticks exactly at the start of each second
+    final now = DateTime.now();
+    final nextSecond = DateTime(
+      now.year,
+      now.month,
+      now.day,
+      now.hour,
+      now.minute,
+      now.second + 1,
+    );
+    final delay = nextSecond.difference(now);
+
+    // Initial delay to sync with system clock
+    Future.delayed(delay, () {
+      // Update immediately
+      _updateTimes();
+
+      // Then setup periodic timer
+      _timer = Timer.periodic(const Duration(seconds: 1), (_) {
+        _updateTimes();
+      });
     });
+  }
+
+  void _updateTimes() {
+    _updateRemainingTime();
+    notifyListeners();
   }
 
   // Getters
@@ -39,6 +72,10 @@ class PrayerTimesProvider extends ChangeNotifier {
   String get remainingTime => _remainingTime;
   bool get isLoading => _isLoading;
   bool get hasError => _hasError;
+
+  String get localTime {
+    return DateFormat('HH:mm:ss').format(DateTime.now());
+  }
 
   String get hijriDate {
     var _hijri = HijriCalendar.now();
@@ -146,7 +183,44 @@ class PrayerTimesProvider extends ChangeNotifier {
 
   void _updateRemainingTime() {
     if (_prayerTimes != null) {
-      _remainingTime = _prayerTimes!.getRemainingTime();
+      final now = DateTime.now();
+      final currentPrayer = _prayerTimesList.firstWhere(
+        (prayer) => prayer.isActive,
+        orElse: () => _prayerTimesList.first,
+      );
+      final currentIndex = _prayerTimesList.indexOf(currentPrayer);
+      final nextPrayer = currentIndex < _prayerTimesList.length - 1
+          ? _prayerTimesList[currentIndex + 1]
+          : _prayerTimesList.first;
+
+      // Parse next prayer time
+      final timeFormat = DateFormat('HH:mm');
+      final nextPrayerTime = timeFormat.parse(nextPrayer.time);
+      final nextPrayerDateTime = DateTime(
+        now.year,
+        now.month,
+        now.day,
+        nextPrayerTime.hour,
+        nextPrayerTime.minute,
+      );
+
+      // If next prayer time is earlier than current time, it's for tomorrow
+      final targetDateTime = nextPrayerDateTime.isBefore(now)
+          ? nextPrayerDateTime.add(const Duration(days: 1))
+          : nextPrayerDateTime;
+
+      final difference = targetDateTime.difference(now);
+      final hours = difference.inHours;
+      final minutes = difference.inMinutes.remainder(60);
+      final seconds = difference.inSeconds.remainder(60);
+
+      if (hours > 0) {
+        _remainingTime = '$hours saat $minutes dakika $seconds saniye';
+      } else if (minutes > 0) {
+        _remainingTime = '$minutes dakika $seconds saniye';
+      } else {
+        _remainingTime = '$seconds saniye';
+      }
       notifyListeners();
     }
   }
@@ -154,6 +228,7 @@ class PrayerTimesProvider extends ChangeNotifier {
   @override
   void dispose() {
     _timer?.cancel();
+    _updateTimer?.cancel();
     super.dispose();
   }
 } 

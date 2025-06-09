@@ -114,6 +114,7 @@ class _HomeContent extends StatelessWidget {
       padding: const EdgeInsets.all(16),
       child: Column(
         children: [
+          // Location Row
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -123,17 +124,21 @@ class _HomeContent extends StatelessWidget {
                 size: 24,
               ),
               const SizedBox(width: 8),
-              Text(
-                provider.locationText,
-                style: GoogleFonts.poppins(
-                  fontSize: 24,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.white,
+              Flexible(
+                child: Text(
+                  provider.locationText,
+                  style: GoogleFonts.poppins(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ],
           ),
           if (provider.prayerTimes != null) ...[
+            const SizedBox(height: 8),
             Text(
               provider.prayerTimes!.gregorianDate,
               style: GoogleFonts.poppins(
@@ -147,6 +152,44 @@ class _HomeContent extends StatelessWidget {
               style: GoogleFonts.poppins(
                 fontSize: 14,
                 color: Colors.white.withOpacity(0.7),
+              ),
+            ),
+            const SizedBox(height: 12),
+            // Local Time Widget
+            Align(
+              alignment: Alignment.center,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.2),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.access_time,
+                      color: Colors.white,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      'Yerel Saat: ',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: Colors.white.withOpacity(0.8),
+                      ),
+                    ),
+                    Text(
+                      provider.localTime,
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -171,7 +214,7 @@ class _HomeContent extends StatelessWidget {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF2A8171), // Slightly lighter green
+        color: const Color(0xFF2A8171),
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
@@ -183,7 +226,6 @@ class _HomeContent extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Current Prayer Section
           Container(
             padding: const EdgeInsets.all(24),
             child: Column(

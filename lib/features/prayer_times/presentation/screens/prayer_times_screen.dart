@@ -232,6 +232,13 @@ class PrayerTimesScreen extends StatelessWidget {
       decoration: BoxDecoration(
         color: const Color(0xFF1C6758),
         borderRadius: BorderRadius.circular(24),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF1C6758).withOpacity(0.2),
+            blurRadius: 20,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         children: [
@@ -244,7 +251,7 @@ class PrayerTimesScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Icon(
                 nextPrayer.icon,
@@ -274,39 +281,58 @@ class PrayerTimesScreen extends StatelessWidget {
                   ],
                 ),
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.2),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(
-                      provider.remainingTime,
-                      style: GoogleFonts.poppins(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    nextPrayer.time,
-                    style: GoogleFonts.poppins(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
+              const SizedBox(width: 12),
+              Text(
+                nextPrayer.time,
+                style: GoogleFonts.poppins(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.white,
+                ),
               ),
             ],
+          ),
+          const SizedBox(height: 20),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  Colors.white.withOpacity(0.1),
+                  Colors.white.withOpacity(0.2),
+                  Colors.white.withOpacity(0.1),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: Colors.white.withOpacity(0.2),
+                width: 1,
+              ),
+            ),
+            child: Column(
+              children: [
+                Text(
+                  'Kalan Süre',
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: Colors.white.withOpacity(0.8),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  provider.remainingTime,
+                  style: GoogleFonts.poppins(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),
@@ -354,28 +380,29 @@ class PrayerTimesScreen extends StatelessWidget {
                   size: 24,
                 ),
                 const SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      prayer.name,
-                      style: GoogleFonts.poppins(
-                        fontSize: 16,
-                        fontWeight:
-                            prayer.isActive ? FontWeight.bold : FontWeight.normal,
-                        color: const Color(0xFF1C6758),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        prayer.name,
+                        style: GoogleFonts.poppins(
+                          fontSize: 16,
+                          fontWeight:
+                              prayer.isActive ? FontWeight.bold : FontWeight.normal,
+                          color: const Color(0xFF1C6758),
+                        ),
                       ),
-                    ),
-                    Text(
-                      prayer.arabicName,
-                      style: GoogleFonts.amiri(
-                        fontSize: 14,
-                        color: const Color(0xFF1C6758).withOpacity(0.6),
+                      Text(
+                        prayer.arabicName,
+                        style: GoogleFonts.amiri(
+                          fontSize: 14,
+                          color: const Color(0xFF1C6758).withOpacity(0.6),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-                const Spacer(),
                 Text(
                   prayer.time,
                   style: GoogleFonts.poppins(
