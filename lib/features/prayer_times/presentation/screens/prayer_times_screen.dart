@@ -171,51 +171,35 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: const Color(0xFF1C6758),
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.white),
-          onPressed: () => Navigator.of(context).pop(),
-        ),
-      ),
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              const Color(0xFF1C6758),
-              const Color(0xFF1C6758).withOpacity(0.8),
-            ],
-          ),
-        ),
-        child: SafeArea(
-          child: _isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.white,
-                  ),
-                )
-              : _hasError
-                  ? _buildErrorState()
-                  : SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: Column(
-                        children: [
-                          _buildHeader(context),
-                          _buildDateSection(),
-                          const SizedBox(height: 24),
-                          _buildNextPrayerCard(),
-                          const SizedBox(height: 24),
-                          _buildPrayerTimesList(),
-                          const SizedBox(height: 24),
-                          if (_prayerTimes != null) _buildCountdownWidget(),
-                          const SizedBox(height: 24),
-                        ],
+      backgroundColor: const Color(0xFF1C6758),
+      body: SafeArea(
+        child: _isLoading
+            ? const Center(
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                ),
+              )
+            : _hasError
+                ? _buildErrorState()
+                : Column(
+                    children: [
+                      _buildHeader(context),
+                      Expanded(
+                        child: SingleChildScrollView(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          child: Column(
+                            children: [
+                              _buildDateSection(),
+                              const SizedBox(height: 24),
+                              _buildNextPrayerCard(),
+                              const SizedBox(height: 24),
+                              _buildPrayerTimesList(),
+                            ],
+                          ),
+                        ),
                       ),
-                    ),
-        ),
+                    ],
+                  ),
       ),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
@@ -381,6 +365,9 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
         ? _prayerTimesList[currentIndex + 1]
         : _prayerTimesList.first;
 
+    // Kalan süreyi hesapla
+    final remainingTime = _prayerTimes?.getRemainingTime() ?? '';
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 24),
       padding: const EdgeInsets.all(24),
@@ -414,34 +401,48 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
                 color: const Color(0xFF1C6758),
               ),
               const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      nextPrayer.name,
+                      style: GoogleFonts.poppins(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: const Color(0xFF1C6758),
+                      ),
+                    ),
+                    Text(
+                      nextPrayer.arabicName,
+                      style: GoogleFonts.amiri(
+                        fontSize: 18,
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    nextPrayer.name,
+                    remainingTime,
+                    style: GoogleFonts.poppins(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0xFF1C6758),
+                    ),
+                  ),
+                  Text(
+                    nextPrayer.time,
                     style: GoogleFonts.poppins(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
                       color: const Color(0xFF1C6758),
                     ),
                   ),
-                  Text(
-                    nextPrayer.arabicName,
-                    style: GoogleFonts.amiri(
-                      fontSize: 18,
-                      color: Colors.grey[600],
-                    ),
-                  ),
                 ],
-              ),
-              const Spacer(),
-              Text(
-                nextPrayer.time,
-                style: GoogleFonts.poppins(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF1C6758),
-                ),
               ),
             ],
           ),
