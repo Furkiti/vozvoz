@@ -7,11 +7,31 @@ import 'package:vozvoz/core/theme/app_theme.dart';
 import 'package:vozvoz/features/prayer_times/presentation/providers/prayer_times_provider.dart';
 import 'package:vozvoz/features/prayer_times/presentation/screens/home_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:vozvoz/features/quran/presentation/providers/quran_provider.dart';
+import 'package:vozvoz/features/prayer_times/data/services/prayer_times_service.dart';
+import 'package:vozvoz/core/services/location_service.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
   configureDependencies();
-  runApp(const MyApp());
+
+  final prayerTimesService = PrayerTimesService();
+  final locationService = LocationService();
+
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => PrayerTimesProvider(
+            locationService,
+            prayerTimesService,
+          ),
+        ),
+        ChangeNotifierProvider(create: (_) => QuranProvider()),
+      ],
+      child: const MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {

@@ -15,6 +15,7 @@ import 'package:vozvoz/features/prayer_times/presentation/widgets/islamic_story_
 import 'package:vozvoz/core/constants/app_constants.dart';
 import 'package:provider/provider.dart';
 import 'package:vozvoz/features/prayer_times/presentation/providers/prayer_times_provider.dart';
+import 'package:vozvoz/features/quran/presentation/providers/quran_provider.dart';
 import 'package:vozvoz/features/quran/presentation/screens/quran_screen.dart';
 import 'package:vozvoz/features/settings/presentation/screens/settings_screen.dart';
 
@@ -352,116 +353,178 @@ class _HomeContent extends StatelessWidget {
   }
 
   Widget _buildDailyVerseCard() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: const Color(0xFFFFF8E7),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Günün Ayeti',
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF1C6758),
+    return Consumer<QuranProvider>(
+      builder: (context, quranProvider, child) {
+        final dailyVerse = quranProvider.getDailyVerse();
+        if (dailyVerse == null) return const SizedBox.shrink();
+
+        return GestureDetector(
+          onTap: () {
+            Navigator.pushNamed(context, '/quran');
+          },
+          child: Container(
+            margin: const EdgeInsets.symmetric(horizontal: 16),
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFF8E7),
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.05),
+                  blurRadius: 10,
+                  offset: const Offset(0, 2),
                 ),
-              ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.share,
-                  color: Color(0xFF1C6758),
+              ],
+            ),
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Günün Ayeti',
+                      style: GoogleFonts.poppins(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF1C6758),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () {},
+                      icon: const Icon(
+                        Icons.share,
+                        color: Color(0xFF1C6758),
+                      ),
+                    ),
+                  ],
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
-            style: GoogleFonts.amiri(
-              fontSize: 32,
-              color: const Color(0xFF1C6758),
+                const SizedBox(height: 16),
+                Text(
+                  dailyVerse.arabicText,
+                  style: GoogleFonts.amiri(
+                    fontSize: 32,
+                    color: const Color(0xFF1C6758),
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 16),
+                Text(
+                  dailyVerse.turkishText,
+                  style: GoogleFonts.poppins(
+                    fontSize: 16,
+                    color: Colors.grey[800],
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 12),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF1C6758).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    '${dailyVerse.surahName}, ${dailyVerse.verseNumber}. Ayet',
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      color: const Color(0xFF1C6758),
+                      fontStyle: FontStyle.italic,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Tüm ayetleri görüntüle',
+                      style: GoogleFonts.poppins(
+                        fontSize: 14,
+                        color: const Color(0xFF1C6758),
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    const Icon(
+                      Icons.arrow_forward,
+                      size: 16,
+                      color: Color(0xFF1C6758),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 16),
-          Text(
-            'Rahman ve Rahim olan Allah\'ın adıyla',
-            style: GoogleFonts.poppins(
-              fontSize: 16,
-              color: Colors.grey[800],
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget _buildDailyHadithCard() {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: const Color(0xFFE6F4F1),
-        borderRadius: BorderRadius.circular(24),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return Consumer<QuranProvider>(
+      builder: (context, quranProvider, child) {
+        final dailyHadith = quranProvider.getDailyHadith();
+        if (dailyHadith == null) return const SizedBox.shrink();
+
+        return Container(
+          margin: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.all(24),
+          decoration: BoxDecoration(
+            color: const Color(0xFFE6F4F1),
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Column(
             children: [
-              Text(
-                'Günün Hadisi',
-                style: GoogleFonts.poppins(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xFF1C6758),
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Günün Hadisi',
+                    style: GoogleFonts.poppins(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF1C6758),
+                    ),
+                  ),
+                  IconButton(
+                    onPressed: () {},
+                    icon: const Icon(
+                      Icons.share,
+                      color: Color(0xFF1C6758),
+                    ),
+                  ),
+                ],
               ),
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(
-                  Icons.share,
-                  color: Color(0xFF1C6758),
+              const SizedBox(height: 16),
+              Text(
+                dailyHadith.text,
+                style: GoogleFonts.poppins(
+                  fontSize: 16,
+                  color: Colors.grey[800],
+                  height: 1.5,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 12),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF1C6758).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  dailyHadith.source,
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: const Color(0xFF1C6758),
+                    fontStyle: FontStyle.italic,
+                  ),
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
-          Text(
-            'Kolaylaştırınız, zorlaştırmayınız. Müjdeleyiniz, nefret ettirmeyiniz.',
-            style: GoogleFonts.poppins(
-              fontSize: 16,
-              color: Colors.grey[800],
-              height: 1.5,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 12),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1C6758).withOpacity(0.1),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Text(
-              'Buhârî, İlim, 11',
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                color: const Color(0xFF1C6758),
-                fontStyle: FontStyle.italic,
-              ),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
