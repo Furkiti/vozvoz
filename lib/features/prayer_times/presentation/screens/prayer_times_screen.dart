@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vozvoz/features/prayer_times/domain/models/prayer_time.dart';
 import 'package:vozvoz/features/prayer_times/presentation/providers/prayer_times_provider.dart';
+import 'package:vozvoz/features/qibla/presentation/screens/qibla_screen.dart';
 
 class PrayerTimesScreen extends StatelessWidget {
   const PrayerTimesScreen({super.key});
@@ -46,7 +47,7 @@ class PrayerTimesScreen extends StatelessWidget {
                         ),
                         child: Column(
                           children: [
-                            _buildDateSection(provider),
+                            _buildDateSection(context, provider),
                             const SizedBox(height: 24),
                             _buildNextPrayerCard(provider),
                             const SizedBox(height: 24),
@@ -148,44 +149,73 @@ class PrayerTimesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDateSection(PrayerTimesProvider provider) {
-    return Column(
+  Widget _buildDateSection(BuildContext context, PrayerTimesProvider provider) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Row(
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(
-              Icons.calendar_today,
-              color: Color(0xFF1C6758),
-              size: 16,
-            ),
-            const SizedBox(width: 8),
-            if (provider.prayerTimes != null)
-              Text(
-                provider.prayerTimes!.hijriDate,
-                style: GoogleFonts.poppins(
-                  fontSize: 14,
-                  color: const Color(0xFF1C6758),
+            Row(
+              children: [
+                const Icon(
+                  Icons.calendar_today,
+                  color: Color(0xFF1C6758),
+                  size: 16,
                 ),
-              ),
+                const SizedBox(width: 8),
+                if (provider.prayerTimes != null)
+                  Text(
+                    provider.prayerTimes!.hijriDate,
+                    style: GoogleFonts.poppins(
+                      fontSize: 14,
+                      color: const Color(0xFF1C6758),
+                    ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                const Icon(
+                  Icons.location_on_outlined,
+                  color: Color(0xFF1C6758),
+                  size: 16,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  provider.locationText,
+                  style: GoogleFonts.poppins(
+                    fontSize: 14,
+                    color: const Color(0xFF1C6758),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
-        const SizedBox(height: 4),
-        Row(
-          children: [
-            const Icon(
-              Icons.location_on_outlined,
-              color: Color(0xFF1C6758),
-              size: 16,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              provider.locationText,
-              style: GoogleFonts.poppins(
-                fontSize: 14,
-                color: const Color(0xFF1C6758),
+        GestureDetector(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const QiblaScreen(),
               ),
+            );
+          },
+          child: Container(
+            width: 48,
+            height: 48,
+            decoration: BoxDecoration(
+              color: const Color(0xFF1C6758).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(24),
             ),
-          ],
+            child: const Icon(
+              Icons.explore_outlined,
+              color: Color(0xFF1C6758),
+              size: 24,
+            ),
+          ),
         ),
       ],
     );

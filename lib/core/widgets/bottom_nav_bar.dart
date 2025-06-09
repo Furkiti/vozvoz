@@ -38,9 +38,9 @@ class BottomNavBar extends StatelessWidget {
           label: 'Kuran',
         ),
         NavigationDestination(
-          icon: Icon(Icons.explore_outlined),
-          selectedIcon: Icon(Icons.explore, color: Color(0xFF1C6758)),
-          label: 'Kıble',
+          icon: Icon(Icons.settings_outlined),
+          selectedIcon: Icon(Icons.settings, color: Color(0xFF1C6758)),
+          label: 'Ayarlar',
         ),
       ],
     );

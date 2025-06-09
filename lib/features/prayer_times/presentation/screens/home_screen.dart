@@ -16,7 +16,7 @@ import 'package:vozvoz/core/constants/app_constants.dart';
 import 'package:provider/provider.dart';
 import 'package:vozvoz/features/prayer_times/presentation/providers/prayer_times_provider.dart';
 import 'package:vozvoz/features/quran/presentation/screens/quran_screen.dart';
-import 'package:vozvoz/features/qibla/presentation/screens/qibla_screen.dart';
+import 'package:vozvoz/features/settings/presentation/screens/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
     const _HomeContent(),
     const PrayerTimesScreen(),
     const QuranScreen(),
-    const QiblaScreen(),
+    const SettingsScreen(),
   ];
 
   void _handleNavigation(int index) {
