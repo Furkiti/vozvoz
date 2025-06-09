@@ -3,106 +3,96 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:injectable/injectable.dart';
 import 'package:vozvoz/core/services/location_service.dart';
+import 'package:vozvoz/features/prayer_times/data/services/prayer_times_service.dart';
 import 'package:vozvoz/features/prayer_times/domain/models/prayer_time.dart';
 import 'package:vozvoz/features/prayer_times/domain/models/prayer_times.dart';
-import 'package:vozvoz/features/prayer_times/domain/repositories/prayer_times_repository.dart';
-import 'package:vozvoz/core/constants/app_constants.dart';
+import 'package:hijri/hijri_calendar.dart';
+import 'package:intl/intl.dart';
 
 @injectable
 class PrayerTimesProvider extends ChangeNotifier {
   final LocationService _locationService;
-  final PrayerTimesRepository _prayerTimesRepository;
-  Timer? _timer;
+  final PrayerTimesService _prayerTimesService;
 
   PrayerTimes? _prayerTimes;
   List<PrayerTime> _prayerTimesList = [];
-  String _locationText = 'Konum alınıyor...';
+  String _locationText = '';
+  String _remainingTime = '';
   bool _isLoading = true;
   bool _hasError = false;
-  String _remainingTime = '';
+  Timer? _timer;
 
-  // Getters
-  PrayerTimes? get prayerTimes => _prayerTimes;
-  List<PrayerTime> get prayerTimesList => _prayerTimesList;
-  String get locationText => _locationText;
-  bool get isLoading => _isLoading;
-  bool get hasError => _hasError;
-  String get remainingTime => _remainingTime;
-
-  PrayerTimesProvider(this._locationService, this._prayerTimesRepository) {
-    initializePrayerTimes();
-    // Her dakika kalan süreyi güncelle
+  PrayerTimesProvider(
+    this._locationService,
+    this._prayerTimesService,
+  ) {
+    _initializePrayerTimes();
     _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
       _updateRemainingTime();
     });
   }
 
-  @override
-  void dispose() {
-    _timer?.cancel();
-    super.dispose();
+  // Getters
+  PrayerTimes? get prayerTimes => _prayerTimes;
+  List<PrayerTime> get prayerTimesList => _prayerTimesList;
+  String get locationText => _locationText;
+  String get remainingTime => _remainingTime;
+  bool get isLoading => _isLoading;
+  bool get hasError => _hasError;
+
+  String get hijriDate {
+    var _hijri = HijriCalendar.now();
+    return '${_hijri.hDay} ${_getHijriMonthName(_hijri.hMonth)} ${_hijri.hYear}';
   }
 
-  Future<void> initializePrayerTimes() async {
+  String _getHijriMonthName(int month) {
+    const months = [
+      'Muharrem',
+      'Safer',
+      'Rebiülevvel',
+      'Rebiülahir',
+      'Cemaziyelevvel',
+      'Cemaziyelahir',
+      'Recep',
+      'Şaban',
+      'Ramazan',
+      'Şevval',
+      'Zilkade',
+      'Zilhicce'
+    ];
+    return months[month - 1];
+  }
+
+  Future<void> _initializePrayerTimes() async {
     try {
       _isLoading = true;
       _hasError = false;
       notifyListeners();
 
-      final position = await _locationService.getCurrentLocation();
-      if (position == null) {
-        await _useDefaultLocation();
-        return;
-      }
-
-      await _updatePrayerTimes(position);
-    } catch (e) {
-      debugPrint('Prayer times initialization error: $e');
-      _hasError = true;
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<void> _useDefaultLocation() async {
-    final defaultPosition = Position(
-      longitude: AppConstants.defaultLongitude,
-      latitude: AppConstants.defaultLatitude,
-      timestamp: DateTime.now(),
-      accuracy: 0,
-      altitude: 0,
-      heading: 0,
-      speed: 0,
-      speedAccuracy: 0,
-      altitudeAccuracy: 0,
-      headingAccuracy: 0,
-    );
-
-    _locationText = AppConstants.defaultCity;
-    await _updatePrayerTimes(defaultPosition);
-  }
-
-  Future<void> _updatePrayerTimes(Position position) async {
-    try {
-      final cityName = await _locationService.getAddressFromPosition(position);
-      _locationText = cityName;
-
-      final prayerTimes = await _prayerTimesRepository.getPrayerTimesByCoordinates(
+      final position = await _locationService.getCurrentPosition();
+      final placemark = await _locationService.getPlacemarkFromPosition(position);
+      
+      _locationText = '${placemark.subAdministrativeArea}, ${placemark.administrativeArea}';
+      
+      _prayerTimes = await _prayerTimesService.getPrayerTimes(
         latitude: position.latitude,
         longitude: position.longitude,
       );
 
-      _prayerTimes = prayerTimes;
       _updatePrayerTimesList();
       _updateRemainingTime();
-      _hasError = false;
-    } catch (e) {
-      debugPrint('Update prayer times error: $e');
-      _hasError = true;
-    } finally {
+      
       _isLoading = false;
       notifyListeners();
+    } catch (e) {
+      _isLoading = false;
+      _hasError = true;
+      notifyListeners();
     }
+  }
+
+  Future<void> refreshPrayerTimes() async {
+    await _initializePrayerTimes();
   }
 
   void _updatePrayerTimesList() {
@@ -159,5 +149,11 @@ class PrayerTimesProvider extends ChangeNotifier {
       _remainingTime = _prayerTimes!.getRemainingTime();
       notifyListeners();
     }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
   }
 } 

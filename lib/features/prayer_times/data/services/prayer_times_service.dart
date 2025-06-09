@@ -6,7 +6,10 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:vozvoz/core/constants/app_constants.dart';
 import 'package:vozvoz/features/prayer_times/domain/models/prayer_times.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:injectable/injectable.dart';
+import 'package:http/http.dart' as http;
 
+@injectable
 class PrayerTimesService {
   static final PrayerTimesService _instance = PrayerTimesService._internal();
   factory PrayerTimesService() => _instance;
@@ -162,6 +165,25 @@ class PrayerTimesService {
         return cachedData;
       }
       throw Exception('Namaz vakitleri alınamadı: $e');
+    }
+  }
+
+  Future<PrayerTimes> getPrayerTimesFromHttp(double latitude, double longitude) async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+          'http://api.aladhan.com/v1/timings/${DateTime.now().millisecondsSinceEpoch ~/ 1000}?latitude=$latitude&longitude=$longitude&method=13',
+        ),
+      );
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body);
+        return PrayerTimes.fromJson(data['data']);
+      } else {
+        throw Exception('Failed to load prayer times');
+      }
+    } catch (e) {
+      throw Exception('Failed to load prayer times: $e');
     }
   }
 } 

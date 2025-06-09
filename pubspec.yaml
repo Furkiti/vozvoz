@@ -45,7 +45,7 @@ dependencies:
   
   # Location
   geolocator: ^10.1.0
-  geocoding: ^2.1.1
+  geocoding: ^4.0.0
   
   # Storage
   shared_preferences: ^2.2.2
@@ -57,6 +57,8 @@ dependencies:
 
   # Utils
   intl: ^0.20.2
+  hijri: ^3.0.0
+  http: ^1.4.0
 
 dev_dependencies:
   flutter_test:

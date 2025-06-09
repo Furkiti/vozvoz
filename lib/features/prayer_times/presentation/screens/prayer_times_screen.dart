@@ -72,41 +72,34 @@ class PrayerTimesScreen extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const Icon(
-            Icons.cloud_off,
-            size: 64,
+            Icons.error_outline,
             color: Colors.white,
+            size: 48,
           ),
           const SizedBox(height: 16),
           Text(
-            'Namaz vakitleri yüklenemedi',
+            'Namaz vakitleri yüklenirken bir hata oluştu',
             style: GoogleFonts.poppins(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
+              fontSize: 16,
               color: Colors.white,
             ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Lütfen internet bağlantınızı kontrol edin\nve tekrar deneyin',
             textAlign: TextAlign.center,
-            style: GoogleFonts.poppins(
-              fontSize: 14,
-              color: Colors.white.withOpacity(0.8),
-            ),
           ),
           const SizedBox(height: 24),
-          ElevatedButton.icon(
-            onPressed: () => provider.initializePrayerTimes(),
+          ElevatedButton(
+            onPressed: () => provider.refreshPrayerTimes(),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               foregroundColor: const Color(0xFF1C6758),
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              padding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 12,
+              ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            icon: const Icon(Icons.refresh),
-            label: Text(
+            child: Text(
               'Tekrar Dene',
               style: GoogleFonts.poppins(
                 fontSize: 16,

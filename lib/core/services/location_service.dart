@@ -8,50 +8,46 @@ import 'package:injectable/injectable.dart';
 
 @injectable
 class LocationService {
-  Future<Position?> getCurrentLocation() async {
-    try {
-      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
-      if (!serviceEnabled) {
-        debugPrint('Location services are disabled.');
-        return null;
-      }
+  Future<Position> getCurrentPosition() async {
+    bool serviceEnabled;
+    LocationPermission permission;
 
-      LocationPermission permission = await Geolocator.checkPermission();
-      if (permission == LocationPermission.denied) {
-        permission = await Geolocator.requestPermission();
-        if (permission == LocationPermission.denied) {
-          debugPrint('Location permissions are denied');
-          return null;
-        }
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        debugPrint('Location permissions are permanently denied');
-        return null;
-      }
-
-      return await Geolocator.getCurrentPosition();
-    } catch (e) {
-      debugPrint('Error getting location: $e');
-      return null;
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      throw Exception('Location services are disabled.');
     }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        throw Exception('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      throw Exception(
+        'Location permissions are permanently denied, we cannot request permissions.',
+      );
+    }
+
+    return await Geolocator.getCurrentPosition();
   }
 
-  Future<String> getAddressFromPosition(Position position) async {
+  Future<Placemark> getPlacemarkFromPosition(Position position) async {
     try {
-      List<Placemark> placemarks = await placemarkFromCoordinates(
+      final placemarks = await placemarkFromCoordinates(
         position.latitude,
         position.longitude,
       );
 
       if (placemarks.isNotEmpty) {
-        final place = placemarks[0];
-        return place.administrativeArea ?? place.locality ?? 'Bilinmeyen Konum';
+        return placemarks.first;
+      } else {
+        throw Exception('No placemark found for the given coordinates');
       }
-      return 'Bilinmeyen Konum';
     } catch (e) {
-      debugPrint('Error getting address: $e');
-      return 'Bilinmeyen Konum';
+      throw Exception('Error getting address: $e');
     }
   }
 

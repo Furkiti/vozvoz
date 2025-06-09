@@ -133,7 +133,7 @@ class _HomeContent extends StatelessWidget {
               ),
             ],
           ),
-          if (provider.prayerTimes != null)
+          if (provider.prayerTimes != null) ...[
             Text(
               provider.prayerTimes!.gregorianDate,
               style: GoogleFonts.poppins(
@@ -141,6 +141,15 @@ class _HomeContent extends StatelessWidget {
                 color: Colors.white.withOpacity(0.8),
               ),
             ),
+            const SizedBox(height: 4),
+            Text(
+              provider.hijriDate,
+              style: GoogleFonts.poppins(
+                fontSize: 14,
+                color: Colors.white.withOpacity(0.7),
+              ),
+            ),
+          ],
         ],
       ),
     );
