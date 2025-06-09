@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:vozvoz/core/constants/app_constants.dart';
-import 'package:vozvoz/features/prayer_times/domain/entities/prayer_times.dart';
+import 'package:vozvoz/features/prayer_times/domain/models/prayer_times.dart';
 import 'package:vozvoz/features/prayer_times/domain/repositories/prayer_times_repository.dart';
 
 @Injectable()
@@ -28,7 +28,7 @@ class PrayerTimesRepositoryImpl implements PrayerTimesRepository {
       );
 
       if (response.statusCode == 200) {
-        return PrayerTimes.fromJson(response.data['data']);
+        return PrayerTimes.fromJson(response.data);
       } else {
         throw Exception('Failed to load prayer times');
       }
@@ -55,7 +55,7 @@ class PrayerTimesRepositoryImpl implements PrayerTimesRepository {
       );
 
       if (response.statusCode == 200) {
-        return PrayerTimes.fromJson(response.data['data']);
+        return PrayerTimes.fromJson(response.data);
       } else {
         throw Exception('Failed to load prayer times');
       }
@@ -80,7 +80,7 @@ class PrayerTimesRepositoryImpl implements PrayerTimesRepository {
       );
 
       if (response.statusCode == 200) {
-        return PrayerTimes.fromJson(response.data['data']);
+        return PrayerTimes.fromJson(response.data);
       } else {
         throw Exception('Failed to load prayer times');
       }

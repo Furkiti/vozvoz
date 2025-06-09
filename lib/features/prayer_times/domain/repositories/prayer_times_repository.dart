@@ -1,4 +1,4 @@
-import '../entities/prayer_times.dart';
+import '../models/prayer_times.dart';
 
 abstract class PrayerTimesRepository {
   Future<PrayerTimes> getPrayerTimesByCoordinates({
