@@ -8,7 +8,9 @@ class PrayerTimes {
   final String asr;
   final String maghrib;
   final String isha;
-  String get hijriDate => getFormattedDate(); // Geriye uyumluluk için
+  
+  String get hijriDate => getFormattedDate();
+  String get gregorianDate => DateFormat('d MMMM yyyy', 'tr_TR').format(date);
 
   PrayerTimes({
     required this.date,
@@ -31,7 +33,7 @@ class PrayerTimes {
       final dateStr = data['date']['gregorian']['date'];
       if (dateStr == null) throw Exception('Date is null');
 
-      // Tarihi parse et
+      // Parse date
       final date = DateFormat('dd-MM-yyyy').parse(dateStr);
 
       return PrayerTimes(
@@ -74,7 +76,7 @@ class PrayerTimes {
   }
 
   String getFormattedDate() {
-    return DateFormat('dd MMMM yyyy', 'tr_TR').format(date);
+    return DateFormat('d MMMM yyyy', 'tr_TR').format(date);
   }
 
   String getCurrentPrayer() {
@@ -104,32 +106,73 @@ class PrayerTimes {
     return 'Yatsı'; // Varsayılan olarak
   }
 
+  String getCurrentPrayerTime() {
+    final currentPrayer = getCurrentPrayer();
+    String time;
+    
+    switch (currentPrayer) {
+      case 'İmsak':
+        time = fajr;
+        break;
+      case 'Güneş':
+        time = sunrise;
+        break;
+      case 'Öğle':
+        time = dhuhr;
+        break;
+      case 'İkindi':
+        time = asr;
+        break;
+      case 'Akşam':
+        time = maghrib;
+        break;
+      case 'Yatsı':
+        time = isha;
+        break;
+      default:
+        time = fajr;
+    }
+    
+    return time;
+  }
+
+  String getCurrentPrayerArabic() {
+    final currentPrayer = getCurrentPrayer();
+    switch (currentPrayer) {
+      case 'İmsak':
+        return 'الفجر';
+      case 'Güneş':
+        return 'الشروق';
+      case 'Öğle':
+        return 'الظهر';
+      case 'İkindi':
+        return 'العصر';
+      case 'Akşam':
+        return 'المغرب';
+      case 'Yatsı':
+        return 'العشاء';
+      default:
+        return 'الفجر';
+    }
+  }
+
   String getNextPrayer() {
     final currentPrayer = getCurrentPrayer();
-    final now = DateTime.now();
-    final currentTime = DateFormat('HH:mm').format(now);
-    
     final times = [
-      {'name': 'İmsak', 'time': fajr},
-      {'name': 'Güneş', 'time': sunrise},
-      {'name': 'Öğle', 'time': dhuhr},
-      {'name': 'İkindi', 'time': asr},
-      {'name': 'Akşam', 'time': maghrib},
-      {'name': 'Yatsı', 'time': isha},
+      'İmsak',
+      'Güneş',
+      'Öğle',
+      'İkindi',
+      'Akşam',
+      'Yatsı',
     ];
 
-    // Eğer şu an yatsı vaktindeyse ve saat gece yarısını geçmediyse
-    if (currentPrayer == 'Yatsı' && currentTime.compareTo('00:00') >= 0) {
+    final currentIndex = times.indexOf(currentPrayer);
+    if (currentIndex == -1 || currentIndex == times.length - 1) {
       return 'İmsak';
     }
 
-    for (int i = 0; i < times.length; i++) {
-      if (times[i]['name'] == currentPrayer && i < times.length - 1) {
-        return times[i + 1]['name']!;
-      }
-    }
-
-    return 'İmsak'; // Varsayılan olarak
+    return times[currentIndex + 1];
   }
 
   String getNextPrayerTime() {
@@ -159,7 +202,27 @@ class PrayerTimes {
         time = fajr;
     }
     
-    return '$nextPrayer - $time';
+    return time;
+  }
+
+  String getNextPrayerArabic() {
+    final nextPrayer = getNextPrayer();
+    switch (nextPrayer) {
+      case 'İmsak':
+        return 'الفجر';
+      case 'Güneş':
+        return 'الشروق';
+      case 'Öğle':
+        return 'الظهر';
+      case 'İkindi':
+        return 'العصر';
+      case 'Akşam':
+        return 'المغرب';
+      case 'Yatsı':
+        return 'العشاء';
+      default:
+        return 'الفجر';
+    }
   }
 
   String getRemainingTime() {

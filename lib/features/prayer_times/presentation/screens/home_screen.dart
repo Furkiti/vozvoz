@@ -1,15 +1,17 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:vozvoz/core/services/location_service.dart';
 import 'package:vozvoz/core/widgets/bottom_nav_bar.dart';
-import 'package:vozvoz/core/widgets/location_permission_dialog.dart';
 import 'package:vozvoz/features/prayer_times/data/services/prayer_times_service.dart';
 import 'package:vozvoz/features/prayer_times/domain/models/prayer_times.dart';
-import 'package:vozvoz/features/prayer_times/presentation/widgets/current_prayer_widget.dart';
-import 'package:vozvoz/features/ayat_hadith/presentation/widgets/verse_hadith_card.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:vozvoz/features/prayer_times/presentation/screens/prayer_times_screen.dart';
+import 'package:vozvoz/features/prayer_times/presentation/widgets/location_date_card.dart';
+import 'package:vozvoz/features/prayer_times/presentation/widgets/prayer_info_card.dart';
+import 'package:vozvoz/features/prayer_times/presentation/widgets/daily_ayah_card.dart';
+import 'package:vozvoz/features/prayer_times/presentation/widgets/daily_hadith_card.dart';
+import 'package:vozvoz/features/prayer_times/presentation/widgets/islamic_story_card.dart';
 import 'package:vozvoz/core/constants/app_constants.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -205,34 +207,65 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               child: SafeArea(
-                child: SingleChildScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 24.0),
-                    child: Column(
-                      children: [
-                        _buildHeader(),
-                        if (_isLoading)
-                          const Padding(
-                            padding: EdgeInsets.all(24.0),
-                            child: Center(
+                child: CustomScrollView(
+                  slivers: [
+                    SliverPersistentHeader(
+                      pinned: true,
+                      delegate: _StickyHeaderDelegate(
+                        child: LocationDateCard(
+                          location: _locationText,
+                          hijriDate: _prayerTimes?.hijriDate ?? '',
+                          gregorianDate: _prayerTimes?.gregorianDate ?? '',
+                        ),
+                      ),
+                    ),
+                    SliverToBoxAdapter(
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 24),
+                          if (_isLoading)
+                            const Center(
                               child: CircularProgressIndicator(
                                 color: Color(0xFF1C6758),
                               ),
+                            )
+                          else if (_hasLocationError)
+                            _buildErrorState()
+                          else ...[
+                            PrayerInfoCard(
+                              currentPrayer: _prayerTimes?.getCurrentPrayer() ?? '',
+                              currentPrayerTime: _prayerTimes?.getCurrentPrayerTime() ?? '',
+                              currentPrayerArabic: _prayerTimes?.getCurrentPrayerArabic() ?? '',
+                              nextPrayer: _prayerTimes?.getNextPrayer() ?? '',
+                              nextPrayerTime: _prayerTimes?.getNextPrayerTime() ?? '',
+                              nextPrayerArabic: _prayerTimes?.getNextPrayerArabic() ?? '',
+                              remainingTime: _prayerTimes?.getRemainingTime() ?? '',
                             ),
-                          )
-                        else
-                          _buildPrayerTimesCard(),
-                        if (!_hasLocationError && !_isLoading) ...[
-                          _buildDailyInspirationCard(),
-                          const SizedBox(height: 16),
-                          _buildDailyInspirationCard(),
-                          const SizedBox(height: 16),
-                          _buildDailyInspirationCard(),
+                            const SizedBox(height: 24),
+                            DailyAyahCard(
+                              arabicText: 'بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ',
+                              translation: 'Rahman ve Rahim olan Allah\'ın adıyla',
+                              source: 'Fatiha Suresi, 1. Ayet',
+                              onShare: () {},
+                            ),
+                            const SizedBox(height: 24),
+                            DailyHadithCard(
+                              hadithText: 'Kolaylaştırınız, zorlaştırmayınız. Müjdeleyiniz, nefret ettirmeyiniz.',
+                              source: 'Buhârî, İlim, 11',
+                              onShare: () {},
+                            ),
+                            const SizedBox(height: 24),
+                            IslamicStoryCard(
+                              title: 'Hz. Mevlana\'nın Sabır Hikayesi',
+                              content: 'Bir gün Hz. Mevlana\'ya bir derviş geldi ve "Efendim" dedi, "ben sabrın ne olduğunu bilmiyorum. Bana sabrı öğretir misiniz?"...',
+                              onReadMore: () {},
+                            ),
+                            const SizedBox(height: 24),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ),
             )
@@ -256,263 +289,77 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.all(24.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                'Namazio',
-                style: GoogleFonts.poppins(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: const Color(0xFF1C6758),
-                ),
-              ),
-              Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 10,
-                      offset: const Offset(0, 2),
-                    ),
-                  ],
-                ),
-                child: const Icon(
-                  Icons.notifications_none,
-                  color: Color(0xFF1C6758),
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              const Icon(
-                Icons.location_on_outlined,
-                size: 16,
-                color: Color(0xFF1C6758),
-              ),
-              const SizedBox(width: 4),
-              Text(
-                _locationText,
-                style: GoogleFonts.poppins(
-                  fontSize: 14,
-                  color: const Color(0xFF1C6758),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildPrayerTimesCard() {
-    return GestureDetector(
-      onTap: () => _handleNavigation(1),
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 24),
-        padding: const EdgeInsets.all(24),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 20,
-              offset: const Offset(0, 4),
-            ),
-          ],
-        ),
-        child: Column(
-          children: [
-            if (_hasLocationError)
-              _buildErrorState()
-            else
-              Column(
-                children: [
-                  _buildCurrentPrayerInfo(),
-                  const SizedBox(height: 24),
-                  _buildNextPrayerInfo(),
-                ],
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildCurrentPrayerInfo() {
-    return Column(
-      children: [
-        Text(
-          'Şu anki vakit',
-          style: GoogleFonts.poppins(
-            fontSize: 16,
-            color: Colors.grey[600],
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          _prayerTimes?.getCurrentPrayer() ?? '-',
-          style: GoogleFonts.poppins(
-            fontSize: 32,
-            fontWeight: FontWeight.bold,
-            color: const Color(0xFF1C6758),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildNextPrayerInfo() {
-    return Column(
-      children: [
-        Text(
-          'Sonraki vakit',
-          style: GoogleFonts.poppins(
-            fontSize: 16,
-            color: Colors.grey[600],
-          ),
-        ),
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              _prayerTimes?.getNextPrayer() ?? '-',
-              style: GoogleFonts.poppins(
-                fontSize: 24,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF1C6758),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              decoration: BoxDecoration(
-                color: const Color(0xFFE6F4F1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(
-                _prayerTimes?.getRemainingTime() ?? '-',
-                style: GoogleFonts.poppins(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: const Color(0xFF1C6758),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-
   Widget _buildErrorState() {
-    return Column(
-      children: [
-        const Icon(
-          Icons.location_off,
-          size: 48,
-          color: Color(0xFF1C6758),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          'Konum bilgisi alınamadı',
-          style: GoogleFonts.poppins(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: const Color(0xFF1C6758),
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Namaz vakitlerini görebilmek için konum izni gerekiyor',
-          textAlign: TextAlign.center,
-          style: GoogleFonts.poppins(
-            fontSize: 14,
-            color: Colors.grey[600],
-          ),
-        ),
-        const SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: _initializeLocation,
-          style: ElevatedButton.styleFrom(
-            backgroundColor: const Color(0xFF1C6758),
-            foregroundColor: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-          ),
-          child: Text(
-            'Tekrar Dene',
-            style: GoogleFonts.poppins(
-              fontSize: 16,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDailyInspirationCard() {
-    return Container(
-      margin: const EdgeInsets.fromLTRB(24, 24, 24, 0),
+    return Padding(
       padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'Günün Ayeti',
-            style: GoogleFonts.poppins(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: const Color(0xFF1C6758),
-            ),
+          const Icon(
+            Icons.location_off,
+            size: 48,
+            color: Color(0xFF1C6758),
           ),
           const SizedBox(height: 16),
           Text(
-            'Kim zerre miktarı hayır yapmışsa onu görür. Kim de zerre miktarı şer işlemişse onu görür.',
+            'Konum bilgisi alınamadı',
             style: GoogleFonts.poppins(
-              fontSize: 16,
-              color: Colors.grey[800],
-              height: 1.5,
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF1C6758),
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Zilzal Suresi, 7-8',
+            'Namaz vakitlerini görebilmek için konum izni gerekiyor',
+            textAlign: TextAlign.center,
             style: GoogleFonts.poppins(
               fontSize: 14,
               color: Colors.grey[600],
-              fontStyle: FontStyle.italic,
+            ),
+          ),
+          const SizedBox(height: 16),
+          ElevatedButton(
+            onPressed: _initializeLocation,
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF1C6758),
+              foregroundColor: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            child: Text(
+              'Tekrar Dene',
+              style: GoogleFonts.poppins(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
         ],
       ),
     );
+  }
+}
+
+class _StickyHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+
+  _StickyHeaderDelegate({required this.child});
+
+  @override
+  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return child;
+  }
+
+  @override
+  double get maxExtent => 100;
+
+  @override
+  double get minExtent => 100;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
+    return true;
   }
 } 

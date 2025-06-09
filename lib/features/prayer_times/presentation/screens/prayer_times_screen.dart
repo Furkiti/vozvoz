@@ -187,14 +187,17 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
                       Expanded(
                         child: SingleChildScrollView(
                           physics: const AlwaysScrollableScrollPhysics(),
-                          child: Column(
-                            children: [
-                              _buildDateSection(),
-                              const SizedBox(height: 24),
-                              _buildNextPrayerCard(),
-                              const SizedBox(height: 24),
-                              _buildPrayerTimesList(),
-                            ],
+                          child: Padding(
+                            padding: const EdgeInsets.only(bottom: 24),
+                            child: Column(
+                              children: [
+                                _buildDateSection(),
+                                const SizedBox(height: 24),
+                                _buildNextPrayerCard(),
+                                const SizedBox(height: 24),
+                                _buildPrayerTimesList(),
+                              ],
+                            ),
                           ),
                         ),
                       ),
